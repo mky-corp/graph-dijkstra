@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <title>Graph Dijkstra</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <script src="//unpkg.com/react/umd/react.development.min.js"></script> -->
+    <!-- <script src="//unpkg.com/react-dom/umd/react-dom.development.min.js"></script> -->
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="//unpkg.com/babel-standalone"></script>
+    <script src="//unpkg.com/react-force-graph-2d"></script>
+    <!--<script src="../../src/packages/react-force-graph-2d/dist/react-force-graph-2d.js"></script>-->
+
+    <link rel="stylesheet" href="css/index.css" />
+  </head>
+
+  <body>
+    <header>
+      <h1>Aplicación de dijkstra con javascript</h1>
+    </header>
+    <div id="graph"></div>
+
+    <script src="./datasets/random_data.js"></script>
+    <script src="./class/dijkstra.js"></script>
+    <script src="./../src/utils/paintNode.js"></script>
+    <script type="text/jsx" src="../src/App.js"></script>
+  </body>
+</html>

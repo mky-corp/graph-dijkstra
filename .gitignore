@@ -1,0 +1,17 @@
+# modules
+
+node_modules
+
+
+# enviroment variables
+
+.env
+.env.local
+.env.production
+
+# config files
+.idea
+.vscode
+*.xml
+*.yml
+*.iml
