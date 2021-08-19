@@ -1,13 +1,29 @@
-const names = [
-  'Joan',
-  'Indira',
-  'Juan',
-  'Raul',
-  'Marcelo',
-  'Aldair',
-  'Jhon',
-  'Kevin',
-  'Brath'
+const nodes = [
+  { id: 'Joan' },
+  { id: 'Indira' },
+  { id: 'Juan' },
+  { id: 'Raul' },
+  { id: 'Marcelo' },
+  { id: 'Aldair' },
+  { id: 'Jhon' },
+  { id: 'Kevin' },
+  { id: 'Brath' }
+];
+
+const links = [
+  { source: 'Joan', target: 'Indira', value: 20 },
+  { source: 'Indira', target: 'Raul', value: 10 },
+  { source: 'Juan', target: 'Jhon', value: 12 },
+  { source: 'Raul', target: 'Marcelo', value: 64 },
+  { source: 'Aldair', target: 'Brath', value: 28 },
+  { source: 'Jhon', target: 'Brath', value: 24 },
+  { source: 'Kevin', target: 'Joan', value: 32 },
+  { source: 'Brath', target: 'Indira', value: 25 },
+  { source: 'Joan', target: 'Jhon', value: 7 },
+  { source: 'Kevin', target: 'Raul', value: 17 },
+  { source: 'Kevin', target: 'Juan', value: 13 },
+  { source: 'Aldair', target: 'Juan', value: 56 },
+  { source: 'Marcelo', target: 'Indira', value: 64 }
 ];
 
 const initialState = { nodes: [], links: [] };
@@ -15,36 +31,22 @@ const initialState = { nodes: [], links: [] };
 const initialForm = { name: '', source: '', target: '', value: '' };
 
 const initialData = {
-  nodes: [...names.map((item) => ({ id: item }))],
-  links: [
-    { source: 'Joan', target: 'Indira', value: 20 },
-    { source: 'Indira', target: 'Raul', value: 10 },
-    { source: 'Juan', target: 'Jhon', value: 12 },
-    { source: 'Raul', target: 'Marcelo', value: 64 },
-    { source: 'Aldair', target: 'Brath', value: 28 },
-    { source: 'Jhon', target: 'Brath', value: 24 },
-    { source: 'Kevin', target: 'Joan', value: 32 },
-    { source: 'Brath', target: 'Indira', value: 25 },
-    { source: 'Joan', target: 'Jhon', value: 7 },
-    { source: 'Kevin', target: 'Raul', value: 17 },
-    { source: 'Kevin', target: 'Juan', value: 13 },
-    { source: 'Aldair', target: 'Juan', value: 56 },
-    { source: 'Marcelo', target: 'Indira', value: 64 }
-  ]
+  nodes,
+  links
 };
 
 const App = () => {
+  const { useEffect, useState, Fragment } = React;
+
   let selectedNodes = [];
   let selects = new Set();
 
   const highlightNodes = new Set();
   const highlightLinks = new Set();
 
-  const { useEffect, useState, Fragment, StrictMode } = React;
-
   const width =
     window.innerWidth < 768 ? window.innerWidth : window.innerWidth / 2;
-  const height = window.innerHeight;
+  const height = window.innerHeight - 100;
 
   const [data, setData] = useState({});
   const [more, setMore] = useState({ value: '', form: 0 });
@@ -95,15 +97,15 @@ const App = () => {
     setForm(initialForm);
   };
 
-  const removeNode = (node) => {
-    let { nodes, links } = Graph.graphData();
-    links = links.filter((l) => l.source !== node && l.target !== node); // Remove links attached to node
-    nodes.splice(node.id, 1); // Remove node
-    nodes.forEach((n, idx) => {
-      n.id = idx;
-    }); // Reset node ids to array index
-    Graph.graphData({ nodes, links });
-  };
+  // const removeNode = (node) => {
+  //   let { nodes, links } = Graph.graphData();
+  //   links = links.filter((l) => l.source !== node && l.target !== node); // Remove links attached to node
+  //   nodes.splice(node.id, 1); // Remove node
+  //   nodes.forEach((n, idx) => {
+  //     n.id = idx;
+  //   }); // Reset node ids to array index
+  //   Graph.graphData({ nodes, links });
+  // };
 
   useEffect(() => {
     init(initialData);
@@ -111,11 +113,43 @@ const App = () => {
 
   return (
     <Fragment>
-      <header>
-        <h1 className='text-center'>Aplicación de búsqueda con dijkstra</h1>
+      <a href='#form' className='d-flex d-md-none container-fixed two'>
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          width='16'
+          height='16'
+          fill='currentColor'
+          className='bi bi-arrow-down'
+          viewBox='0 0 16 16'
+        >
+          <path
+            fillRule='evenodd'
+            d='M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z'
+          />
+        </svg>
+      </a>
+      <a href='#graph' className='d-flex d-md-none container-fixed one'>
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          width='16'
+          height='16'
+          fill='currentColor'
+          className='bi bi-arrow-up'
+          viewBox='0 0 16 16'
+        >
+          <path
+            fillRule='evenodd'
+            d='M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z'
+          />
+        </svg>
+      </a>
+      <header className='bg-dark'>
+        <h1 className='fs-1 p-0 py-2 text-center'>
+          Aplicación de búsqueda con dijkstra
+        </h1>
       </header>
       <main className='d-flex w-100 h-100 flex-column flex-md-row'>
-        <section className='p-3'>
+        <section id='graph' className='p-3'>
           {Object.keys(data).length && (
             <ForceGraph2D
               width={width}
@@ -188,7 +222,10 @@ const App = () => {
             />
           )}
         </section>
-        <section className='p-5 w-100 h-100 bg-dark'>
+        <section
+          id='form'
+          className='p-3 p-md-5 w-100 h-100 bg-dark bg-opacity-100'
+        >
           <button
             className='btn btn-info w-100 px-3 text-white fw-bold'
             onClick={cleanGraph}
@@ -197,7 +234,7 @@ const App = () => {
           </button>
           <form className='w-100 h-100 d-flex flex-column justify-content-center'>
             <h2 className='py-3'>Añade un nodo</h2>
-            <div className='form-group my-3 px-2 row d-flex align-items-center'>
+            <div className='form-group my-3 px-1 row d-flex align-items-center'>
               <label
                 htmlFor='nameNode'
                 className='col-4 fs-5 text-center col-form-label'
@@ -209,7 +246,7 @@ const App = () => {
                   name='name'
                   type='text'
                   className='mx-3 form-control'
-                  placeholder='Ingrese el nombre del nodo'
+                  placeholder='Ingrese su nombre'
                   value={form.name}
                   onChange={handleChange}
                   required
@@ -224,7 +261,7 @@ const App = () => {
 
           <form className='w-100 h-100 d-flex flex-column justify-content-center'>
             <h2 className='py-3'>Añade una ruta</h2>
-            <div className='form-group my-3 px-2 row d-flex align-items-center'>
+            <div className='form-group my-3 px-1 row d-flex align-items-center'>
               <label
                 htmlFor='source'
                 className='col-4 fs-5 text-center col-form-label'
@@ -253,7 +290,7 @@ const App = () => {
               </div>
             </div>
 
-            <div className='form-group my-3 px-2 row d-flex align-items-center'>
+            <div className='form-group my-3 px-1 row d-flex align-items-center'>
               <label
                 htmlFor='target'
                 className='col-4 fs-5 text-center col-form-label'
@@ -307,7 +344,6 @@ const App = () => {
           </form>
         </section>
       </main>
-      <footer></footer>
     </Fragment>
   );
 };

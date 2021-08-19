@@ -1,8 +1,34 @@
-.spacing-letter {
-  letter-spacing: 0.1rem;
+.container-fixed {
+  position: fixed;
+  background-color: var(--link-color);
+  position: fixed;
+  bottom: 8vh;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+  border-style: none;
+  cursor: pointer;
+  display: none;
+  z-index: 1000;
 }
 
+.one {
+  right: 2vh;
+}
 
-#graph {
+.two {
+  left: 2vh;
+}
 
+.container-fixed svg {
+  border: none;
+  width: 72%;
+  height: 72%;
+}
+
+.container-fixed:hover {
+  opacity: 0.8;
 }
