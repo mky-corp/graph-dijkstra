@@ -12,6 +12,8 @@ const names = [
 
 const initialState = { nodes: [], links: [] };
 
+const initialForm = { name: '', source: '', target: '', value: '' };
+
 const initialData = {
   nodes: [...names.map((item) => ({ id: item }))],
   links: [
@@ -32,61 +34,83 @@ const initialData = {
 };
 
 const App = () => {
-  const dijkstra = new Graph();
   let selectedNodes = [];
+  let selects = new Set();
+
+  const highlightNodes = new Set();
+  const highlightLinks = new Set();
+
+  const { useEffect, useState, Fragment, StrictMode } = React;
+
   const width =
     window.innerWidth < 768 ? window.innerWidth : window.innerWidth / 2;
   const height = window.innerHeight;
 
-  const [data, setData] = React.useState({});
-  const [graph, setGraph] = React.useState({});
+  const [data, setData] = useState({});
+  const [more, setMore] = useState({ value: '', form: 0 });
+  const [graph, setGraph] = useState(new Graph());
+  const [form, setForm] = useState(initialForm);
 
-  const [fmAdd, setFmAdd] = React.useState({ nameNode: '' });
-  const [form, setForm] = React.useState({ source: '', target: '', value: '' });
+  const handleChange = (e, ok = 0) => {
+    if (ok === 1) {
+      setMore({ value: e.target.value, form: 1 });
+    } else if (ok === 2) {
+      setMore({ value: e.target.value, form: 2 });
+    }
 
-  const handleChange = (e) =>
-    setFmAdd({ ...fmAdd, [e.target.name]: e.target.value });
-
-  const handleChangeSelect = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-
+  };
   const init = (data) => {
     setData(data);
-    // setForceGraph(data);
-    data.nodes.forEach(({ id }) => dijkstra.addNode(id));
+
+    data.nodes.forEach(({ id }) => graph.addNode(id));
     data.links.forEach(({ source, target, value }) =>
-      dijkstra.addEdge(source, target, value)
+      graph.addEdge(source, target, value)
     );
   };
 
-  const cleanGraph = () => setData(initialState);
+  const cleanGraph = () => {
+    setData(initialState);
+    setGraph(new Graph());
+  };
 
   const addNode = (e) => {
     e.preventDefault();
-    const nodes = [...data.nodes, { id: fmAdd.nameNode }];
+
+    const nodes = [...data.nodes, { id: form.name }];
     setData({ links: data.links, nodes });
-    setFmAdd({ nameNode: '' });
+    graph.addNode(form.name);
+
+    setForm(initialForm);
   };
 
   const addEdge = (e) => {
     e.preventDefault();
-    console.log(form);
-    const links = [
-      ...data.links,
-      { source: form.source, target: form.target, value: form.value }
-    ];
+    const { source, target, value } = form;
+
+    const links = [...data.links, { source, target, value }];
     setData({ nodes: data.nodes, links });
-    setForm({ source: '', target: '', value: '' });
+
+    graph.addEdge(source, target, Number(value));
+    setForm(initialForm);
   };
 
-  console.log(form);
+  const removeNode = (node) => {
+    let { nodes, links } = Graph.graphData();
+    links = links.filter((l) => l.source !== node && l.target !== node); // Remove links attached to node
+    nodes.splice(node.id, 1); // Remove node
+    nodes.forEach((n, idx) => {
+      n.id = idx;
+    }); // Reset node ids to array index
+    Graph.graphData({ nodes, links });
+  };
 
-  React.useEffect(() => {
+  useEffect(() => {
     init(initialData);
   }, []);
 
   return (
-    <React.Fragment>
+    <Fragment>
       <header>
         <h1 className='text-center'>
           Aplicación de busqueda de la ruta más corta
@@ -105,33 +129,64 @@ const App = () => {
                 `<div><b>${source.id}</b> to <b>${target.id}</b>: <span>${value}</span></div>`
               }
               backgroundColor={'#202020'}
+              autoPauseRedraw={false}
               d3Force={('center', null)}
-              linkColor={() => '#f4f4f4'}
+              linkColor={(link) =>
+                highlightLinks.has(link) ? 'red' : '#f4f4f4'
+              }
+              linkWidth={(link) => (highlightLinks.has(link) ? 6 : 4)}
               graphData={data}
-              linkVal={10}
+              nodeCanvasObjetMode={() => 'before'}
               nodeCanvasObject={(node, ctx) =>
-                nodePaint(node, getColor(node.id), ctx)
+                nodePaint(node, getColor(node, highlightNodes), ctx)
               }
               onNodeClick={(node, e) => {
                 const untoggle = selectedNodes.length === 2;
-                if (untoggle) selectedNodes = [];
+                const toggle = selects.has(node) && selects.size === 1;
+
+                selects.clear();
+                !toggle && selects.add(node);
+
+                if (untoggle) {
+                  selectedNodes = [];
+                  highlightLinks.clear();
+                  highlightNodes.clear();
+                }
 
                 selectedNodes.push(node.id);
+                highlightNodes.add(node);
 
                 if (selectedNodes.length === 2) {
-                  const answer = graph.dijkstra(
+                  const [path, distance] = graph.dijkstra(
                     selectedNodes[0],
                     selectedNodes[1]
                   );
-                  console.log(answer);
+
+                  for (let i = 0; i < path.length - 1; ++i) {
+                    data.links.forEach((link) => {
+                      if (
+                        (path[i] === link.source.id &&
+                          path[i + 1] === link.target.id) ||
+                        (path[i + 1] === link.source.id &&
+                          path[i] === link.target.id)
+                      )
+                        highlightLinks.add(link);
+                    });
+                  }
+
+                  path.shift();
+                  path.pop();
+
+                  path.forEach((el) => {
+                    data.nodes.forEach((item) => {
+                      if (item.id === el) highlightNodes.add(item);
+                    });
+                  });
                 }
               }}
               nodePointerAreaPaint={nodePaint}
-              linkCanvasObjectMode={() => 'before'}
+              linkCanvasObjectMode={() => 'after'}
               linkCanvasObject={(link, ctx) => linkCanvasObject(link, ctx)}
-              autoPauseRedraw={false}
-              linkWidth={5}
-              // linkDirectionalParticles={4}
             />
           )}
         </section>
@@ -153,11 +208,11 @@ const App = () => {
               </label>
               <div className='col-8'>
                 <input
-                  name='nameNode'
+                  name='name'
                   type='text'
                   className='mx-3 form-control'
                   placeholder='Ingrese el nombre del nodo'
-                  value={fmAdd.nameNode}
+                  value={form.name}
                   onChange={handleChange}
                   required
                 />
@@ -182,17 +237,20 @@ const App = () => {
                 <select
                   name='source'
                   className='mx-1 form-control'
-                  onChange={handleChangeSelect}
+                  onChange={(e) => handleChange(e, 2)}
                   value={form.source}
                   required
                 >
                   <option value=''>---</option>
                   {Object.keys(data).length &&
-                    data.nodes.map(({ id }, idx) => (
-                      <option key={idx} value={id}>
-                        {id}
-                      </option>
-                    ))}
+                    data.nodes.map(
+                      ({ id }, idx) =>
+                        (more.form !== 1 || more.value !== id) && (
+                          <option key={idx} value={id}>
+                            {id}
+                          </option>
+                        )
+                    )}
                 </select>
               </div>
             </div>
@@ -208,17 +266,20 @@ const App = () => {
                 <select
                   name='target'
                   className='mx-1 form-control'
-                  onChange={handleChangeSelect}
+                  onChange={(e) => handleChange(e, 1)}
                   value={form.target}
                   required
                 >
                   <option value=''>---</option>
                   {Object.keys(data).length &&
-                    data.nodes.map(({ id }, idx) => (
-                      <option key={idx} value={id}>
-                        {id}
-                      </option>
-                    ))}
+                    data.nodes.map(
+                      ({ id }, idx) =>
+                        (more.form !== 2 || more.value !== id) && (
+                          <option key={idx} value={id}>
+                            {id}
+                          </option>
+                        )
+                    )}
                 </select>
               </div>
             </div>
@@ -232,12 +293,12 @@ const App = () => {
               </label>
               <div className='col-8'>
                 <input
-                  name='value'
                   type='number'
+                  name='value'
                   className='form-control'
                   placeholder='Ingrese la distancia'
                   value={form.value}
-                  onChange={handleChangeSelect}
+                  onChange={handleChange}
                   required
                 />
               </div>
@@ -249,7 +310,7 @@ const App = () => {
         </section>
       </main>
       <footer></footer>
-    </React.Fragment>
+    </Fragment>
   );
 };
 
