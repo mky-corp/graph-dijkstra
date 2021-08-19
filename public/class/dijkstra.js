@@ -51,7 +51,7 @@ class Graph {
       lastStep = backtrace[lastStep];
     }
 
-    return `El camino más corto es ${path} con una distancia de ${times[endNode]}`;
+    return [path, times[endNode]];
   }
 }
 

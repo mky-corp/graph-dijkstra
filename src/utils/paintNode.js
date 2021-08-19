@@ -1,5 +1,6 @@
 const nodePaint = ({ id, x, y }, color, ctx) => {
   ctx.fillStyle = color;
+
   (() => {
     const label = id;
     const fontSize = 8;
@@ -44,7 +45,7 @@ const linkCanvasObject = (link, ctx) => {
   if (textAngle > Math.PI / 2) textAngle = -(Math.PI - textAngle);
   if (textAngle < -Math.PI / 2) textAngle = -(-Math.PI - textAngle);
 
-  const label = `${link.value.toFixed(2)}`;
+  const label = `${link.value}`;
 
   // estimate fontSize to fit in link length
   ctx.font = '2px Sans-Serif';
@@ -76,5 +77,12 @@ const linkCanvasObject = (link, ctx) => {
 };
 
 // gen a number persistent color from around the palette
-const getColor = (n) =>
-  '#' + ((n * 1234567) % Math.pow(2, 24)).toString(16).padStart(6, '0');
+const getColor = () => '#3082b9';
+
+function removeNode(node) {
+  let { nodes, links } = Graph.graphData();
+  links = links.filter(l => l.source !== node && l.target !== node); // Remove links attached to node
+  nodes.splice(node.id, 1); // Remove node
+  nodes.forEach((n, idx) => { n.id = idx; }); // Reset node ids to array index
+  Graph.graphData({ nodes, links });
+}

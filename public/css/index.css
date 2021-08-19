@@ -15,14 +15,11 @@
 
   --link-color: #509ee3;
   --title-color: #343434;
-  --text-color: #171717;
+  --text-color: #f4f4f4;
 
   --white-alpha-color: #ffffff80;
   --black-alpha-color: #00000080;
   --drop-shadow: #ffffff80;
-
-  --gray-bg-color: #e4e4e4;
-  --white-bg-color: #f4f4f4;
 
   --font: 'Poppins', sans-serif;
   --max-width: 1200px;
@@ -43,7 +40,7 @@ body {
   overflow-x: hidden;
   color: var(--text-color);
   font-family: var(--font);
-  background-color: var(--white-bg-color);
+  background-color: var(--dark-color);
 }
 
 a {
