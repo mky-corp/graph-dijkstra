@@ -10,11 +10,26 @@ class Graph {
   }
 
   addEdge(node1, node2, weight) {
-    this.adjacentList[node1].push({ node: node2, weight: weight });
-    this.adjacentList[node2].push({ node: node1, weight: weight });
+    let n1 = this.adjacentList[node1].findIndex((el) => el.node === node2);
+    let n2 = this.adjacentList[node2].findIndex((el) => el.node === node1);
+
+    if (n1 !== -1 && n2 !== -1) {
+      this.adjacentList[node1][n1] = { node: node2, weight };
+      this.adjacentList[node2][n2] = { node: node1, weight };
+    } else {
+      this.adjacentList[node1].push({ node: node2, weight });
+      this.adjacentList[node2].push({ node: node1, weight });
+    }
   }
 
   dijkstra(startNode, endNode) {
+    if (
+      !this.adjacentList[startNode].length ||
+      !this.adjacentList[endNode].length
+    ) {
+      return [['none'], 0];
+    }
+
     let times = {};
     let backtrace = {};
     let pq = new PriorityQueue();
@@ -86,5 +101,3 @@ class PriorityQueue {
     return this.collection.length === 0;
   }
 }
-
-const graph = new Graph();

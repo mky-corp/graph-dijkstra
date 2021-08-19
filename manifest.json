@@ -1,0 +1,25 @@
+{
+  "short_name": "Graph Dijkstra",
+  "name": "Application Web Graph Dijsktra",
+  "icons": [
+    {
+      "assets": "favicon.ico",
+      "sizes": "24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "favicon_32.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "favicon_64.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#f4f4f4",
+  "background_color": "#202020"
+}

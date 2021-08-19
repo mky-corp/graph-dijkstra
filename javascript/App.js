@@ -112,9 +112,7 @@ const App = () => {
   return (
     <Fragment>
       <header>
-        <h1 className='text-center'>
-          Aplicación de busqueda de la ruta más corta
-        </h1>
+        <h1 className='text-center'>Aplicación de búsqueda con dijkstra</h1>
       </header>
       <main className='d-flex w-100 h-100 flex-column flex-md-row'>
         <section className='p-3'>
