@@ -24,49 +24,45 @@ const linkCanvasObject = (link, ctx) => {
   const start = link.source;
   const end = link.target;
 
-  // ignore unbound links
   if (typeof start !== 'object' || typeof end !== 'object') return;
 
-  // calculate label positioning
   const textPos = Object.assign(
-    ...['x', 'y'].map((c) => ({
-      [c]: start[c] + (end[c] - start[c]) / 2 // calc middle point
-    }))
+      ...['x', 'y'].map((c) => ({
+        [c]: start[c] + (end[c] - start[c]) / 2
+      }))
   );
 
   const relLink = { x: end.x - start.x, y: end.y - start.y };
 
   const maxTextLength =
-    Math.sqrt(Math.pow(relLink.x, 2) + Math.pow(relLink.y, 2)) -
-    LABEL_NODE_MARGIN * 2;
+      Math.sqrt(Math.pow(relLink.x, 2) + Math.pow(relLink.y, 2)) -
+      LABEL_NODE_MARGIN * 2;
 
   let textAngle = Math.atan2(relLink.y, relLink.x);
-  // maintain label vertical orientation for legibility
+
   if (textAngle > Math.PI / 2) textAngle = -(Math.PI - textAngle);
   if (textAngle < -Math.PI / 2) textAngle = -(-Math.PI - textAngle);
 
   const label = `${link.value}`;
 
-  // estimate fontSize to fit in link length
   ctx.font = '2px Sans-Serif';
   const fontSize = Math.min(
-    MAX_FONT_SIZE,
-    maxTextLength / ctx.measureText(label).width
+      MAX_FONT_SIZE,
+      maxTextLength / ctx.measureText(label).width
   );
   ctx.font = `${fontSize}px Sans-Serif`;
   const textWidth = ctx.measureText(label).width;
-  const bckgDimensions = [textWidth, fontSize].map((n) => n + fontSize * 0.2); // some padding
+  const bckgDimensions = [textWidth, fontSize].map((n) => n + fontSize * 0.2);
 
-  // draw text label (with background rect)
   ctx.save();
   ctx.translate(textPos.x, textPos.y);
   ctx.rotate(textAngle);
 
   ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
   ctx.fillRect(
-    -bckgDimensions[0] / 2,
-    -bckgDimensions[1] / 2,
-    ...bckgDimensions
+      -bckgDimensions[0] / 2,
+      -bckgDimensions[1] / 2,
+      ...bckgDimensions
   );
 
   ctx.textAlign = 'center';
@@ -76,6 +72,5 @@ const linkCanvasObject = (link, ctx) => {
   ctx.restore();
 };
 
-// gen a number persistent color from around the palette
 const getColor = (node, highlightNodes) =>
-  highlightNodes.has(node) ? 'red' : '#3082b9';
+    highlightNodes.has(node) ? 'red' : '#3082b9';

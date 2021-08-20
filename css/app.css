@@ -1,7 +1,6 @@
 .container-fixed {
   position: fixed;
   background-color: var(--link-color);
-  position: fixed;
   bottom: 8vh;
   width: 4rem;
   height: 4rem;
