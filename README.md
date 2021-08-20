@@ -30,10 +30,10 @@ más corta, haciéndolo más rápido y fácil de usar. El desarrollo de este rep
 GitHub, y estamos agradecidos con todo aquel que quiera contribuir con correcciones de errores y mejoras. Lee a
 continuación para saber cómo puedes participar en la mejora de este repositorio.
 
-### [Code of Conduct](./CODE_OF_CONDUCT.md)
+### [Código de conducta](./CODE_OF_CONDUCT.md)
 
 Uncle-Liquor ha adoptado un Código de Conducta al que esperamos que los participantes del proyecto se adhieran. Por
-favor leer [CODE OF CONDUCT](./CODE_OF_CONDUCT.md) para que pueda entender qué acciones serán y no serán tolerados
+favor leer [Código de conducta](./CODE_OF_CONDUCT.md) para que pueda entender qué acciones serán y no serán tolerados
 
 ### Guia de contribución
 

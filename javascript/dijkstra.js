@@ -20,19 +20,19 @@ class Graph {
    * Función constructora versión JavaScript para inicializar una instancia de la clase Graph
    */
   constructor() {
-    this.nodes = []; //  arreglo con los nombres de los nodos
+    this.nodes = []; // arreglo con los nombres de los nodos
     this.adjacentList = {}; // objeto con la definición de todas las rutas que existen en el grafo
   }
 
   /**
    * Función que añade un nodo a la lista de nodos "nodes" y luego también añade una propiedad con
-   * el nombre que se le paso al objeto "adjacentList" para implementar después las rutas en el grafo.
+   * el nombre que se le pasó al objeto "adjacentList" para implementar después las rutas en el grafo.
    *
    * @param node{string}
    */
   addNode(node) {
     this.nodes.push(node); // Añadiendo un nodo al arreglo de nodos
-    this.adjacentList[node] = []; // asignación de un arreglo a partir de un propiedad del objeto adjacentList
+    this.adjacentList[node] = []; // asignación de un arreglo a partir de una propiedad del objeto adjacentList
   }
 
   /**
