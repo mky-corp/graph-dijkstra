@@ -39,10 +39,10 @@ const App = () => {
   const { useEffect, useState, Fragment } = React;
 
   let selectedNodes = [];
-  let selects = new Set();
 
   const highlightNodes = new Set();
   const highlightLinks = new Set();
+  const answer = [];
 
   const width =
     window.innerWidth < 768 ? window.innerWidth : window.innerWidth / 2;
@@ -96,16 +96,6 @@ const App = () => {
     graph.addEdge(source, target, Number(value));
     setForm(initialForm);
   };
-
-  // const removeNode = (node) => {
-  //   let { nodes, links } = Graph.graphData();
-  //   links = links.filter((l) => l.source !== node && l.target !== node); // Remove links attached to node
-  //   nodes.splice(node.id, 1); // Remove node
-  //   nodes.forEach((n, idx) => {
-  //     n.id = idx;
-  //   }); // Reset node ids to array index
-  //   Graph.graphData({ nodes, links });
-  // };
 
   useEffect(() => {
     init(initialData);
@@ -162,7 +152,6 @@ const App = () => {
               }
               backgroundColor={'#202020'}
               autoPauseRedraw={false}
-              d3Force={('center', null)}
               linkColor={(link) =>
                 highlightLinks.has(link) ? 'red' : '#f4f4f4'
               }
@@ -172,12 +161,8 @@ const App = () => {
               nodeCanvasObject={(node, ctx) =>
                 nodePaint(node, getColor(node, highlightNodes), ctx)
               }
-              onNodeClick={(node, e) => {
+              onNodeClick={(node) => {
                 const untoggle = selectedNodes.length === 2;
-                const toggle = selects.has(node) && selects.size === 1;
-
-                selects.clear();
-                !toggle && selects.add(node);
 
                 if (untoggle) {
                   selectedNodes = [];
@@ -193,6 +178,13 @@ const App = () => {
                     selectedNodes[0],
                     selectedNodes[1]
                   );
+
+                  answer.pop();
+                  answer.pop();
+                  answer.pop();
+                  answer.push(distance);
+                  answer.push(selectedNodes[0]);
+                  answer.push(selectedNodes[1]);
 
                   for (let i = 0; i < path.length - 1; ++i) {
                     data.links.forEach((link) => {
@@ -227,7 +219,7 @@ const App = () => {
           className='p-3 p-md-5 w-100 h-100 bg-dark bg-opacity-100'
         >
           <button
-            className='btn btn-info w-100 px-3 text-white fw-bold'
+            className='btn btn-secondary w-100 px-3 text-white fw-bold'
             onClick={cleanGraph}
           >
             Clean
@@ -254,7 +246,7 @@ const App = () => {
               </div>
             </div>
 
-            <button className='btn btn-success fw-bold' onClick={addNode}>
+            <button className='btn btn-primary fw-bold' onClick={addNode}>
               Añadir Nodo
             </button>
           </form>
@@ -278,14 +270,14 @@ const App = () => {
                 >
                   <option value=''>---</option>
                   {Object.keys(data).length &&
-                    data.nodes.map(
-                      ({ id }, idx) =>
-                        (more.form !== 1 || more.value !== id) && (
-                          <option key={idx} value={id}>
-                            {id}
-                          </option>
-                        )
-                    )}
+                  data.nodes.map(
+                    ({ id }, idx) =>
+                      (more.form !== 1 || more.value !== id) && (
+                        <option key={idx} value={id}>
+                          {id}
+                        </option>
+                      )
+                  )}
                 </select>
               </div>
             </div>
@@ -307,14 +299,14 @@ const App = () => {
                 >
                   <option value=''>---</option>
                   {Object.keys(data).length &&
-                    data.nodes.map(
-                      ({ id }, idx) =>
-                        (more.form !== 2 || more.value !== id) && (
-                          <option key={idx} value={id}>
-                            {id}
-                          </option>
-                        )
-                    )}
+                  data.nodes.map(
+                    ({ id }, idx) =>
+                      (more.form !== 2 || more.value !== id) && (
+                        <option key={idx} value={id}>
+                          {id}
+                        </option>
+                      )
+                  )}
                 </select>
               </div>
             </div>
@@ -338,10 +330,14 @@ const App = () => {
                 />
               </div>
             </div>
-            <button className='btn btn-success fw-bold' onClick={addEdge}>
+            <button className='btn btn-primary fw-bold' onClick={addEdge}>
               Añadir Ruta
             </button>
           </form>
+          <p className='text-white fs-6'>
+            Haga click en dos nodos del gráfico para obtener la distancia más corta entre estos
+            dos
+          </p>
         </section>
       </main>
     </Fragment>
