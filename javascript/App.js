@@ -7,7 +7,7 @@ const nodes = [
   { id: 'Aldair' },
   { id: 'Jhon' },
   { id: 'Kevin' },
-  { id: 'Brath' }
+  { id: 'Brath' },
 ];
 
 const links = [
@@ -23,7 +23,7 @@ const links = [
   { source: 'Kevin', target: 'Raul', value: 17 },
   { source: 'Kevin', target: 'Juan', value: 13 },
   { source: 'Aldair', target: 'Juan', value: 56 },
-  { source: 'Marcelo', target: 'Indira', value: 64 }
+  { source: 'Marcelo', target: 'Indira', value: 64 },
 ];
 
 const initialState = { nodes: [], links: [] };
@@ -32,14 +32,13 @@ const initialForm = { name: '', source: '', target: '', value: '' };
 
 const initialData = {
   nodes,
-  links
+  links,
 };
 
 const App = () => {
   const { useEffect, useState, Fragment } = React;
 
   let selectedNodes = [];
-  let selects = new Set();
 
   const highlightNodes = new Set();
   const highlightLinks = new Set();
@@ -97,16 +96,6 @@ const App = () => {
     setForm(initialForm);
   };
 
-  // const removeNode = (node) => {
-  //   let { nodes, links } = Graph.graphData();
-  //   links = links.filter((l) => l.source !== node && l.target !== node); // Remove links attached to node
-  //   nodes.splice(node.id, 1); // Remove node
-  //   nodes.forEach((n, idx) => {
-  //     n.id = idx;
-  //   }); // Reset node ids to array index
-  //   Graph.graphData({ nodes, links });
-  // };
-
   useEffect(() => {
     init(initialData);
   }, []);
@@ -128,7 +117,7 @@ const App = () => {
           />
         </svg>
       </a>
-      <a href='#graph' className='d-flex d-md-none container-fixed one'>
+      <a href='#grafo' className='d-flex d-md-none container-fixed one'>
         <svg
           xmlns='http://www.w3.org/2000/svg'
           width='16'
@@ -149,7 +138,7 @@ const App = () => {
         </h1>
       </header>
       <main className='d-flex w-100 h-100 flex-column flex-md-row'>
-        <section id='graph' className='p-3'>
+        <section id='grafo' className='p-3'>
           {Object.keys(data).length && (
             <ForceGraph2D
               width={width}
@@ -162,7 +151,6 @@ const App = () => {
               }
               backgroundColor={'#202020'}
               autoPauseRedraw={false}
-              d3Force={('center', null)}
               linkColor={(link) =>
                 highlightLinks.has(link) ? 'red' : '#f4f4f4'
               }
@@ -172,12 +160,8 @@ const App = () => {
               nodeCanvasObject={(node, ctx) =>
                 nodePaint(node, getColor(node, highlightNodes), ctx)
               }
-              onNodeClick={(node, e) => {
+              onNodeClick={(node) => {
                 const untoggle = selectedNodes.length === 2;
-                const toggle = selects.has(node) && selects.size === 1;
-
-                selects.clear();
-                !toggle && selects.add(node);
 
                 if (untoggle) {
                   selectedNodes = [];
@@ -193,6 +177,8 @@ const App = () => {
                     selectedNodes[0],
                     selectedNodes[1]
                   );
+
+                  console.log('La distancia más corta es:', distance);
 
                   for (let i = 0; i < path.length - 1; ++i) {
                     data.links.forEach((link) => {
@@ -227,121 +213,105 @@ const App = () => {
           className='p-3 p-md-5 w-100 h-100 bg-dark bg-opacity-100'
         >
           <button
-            className='btn btn-info w-100 px-3 text-white fw-bold'
+            className='btn btn-secondary w-100 px-3 text-white fw-bold'
             onClick={cleanGraph}
           >
             Clean
           </button>
-          <form className='w-100 h-100 d-flex flex-column justify-content-center'>
+          <form className='w-100 h-100 d-flex flex-column justify-content-start'>
             <h2 className='py-3'>Añade un nodo</h2>
-            <div className='form-group my-3 px-1 row d-flex align-items-center'>
-              <label
-                htmlFor='nameNode'
-                className='col-4 fs-5 text-center col-form-label'
-              >
+            <div className='form-group ms-3 ms-lg-5  my-3 d-flex align-items-center justify-content-between'>
+              <label htmlFor='name' className='ms-1 ms-lg-3 fs-5 text-center'>
                 Nombre:
               </label>
-              <div className='col-8'>
-                <input
-                  name='name'
-                  type='text'
-                  className='mx-3 form-control'
-                  placeholder='Ingrese su nombre'
-                  value={form.name}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+              <input
+                name='name'
+                type='text'
+                className='w-mq ms-2 form-control'
+                placeholder='Ingrese su nombre'
+                value={form.name}
+                onChange={handleChange}
+                required
+              />
             </div>
 
-            <button className='btn btn-success fw-bold' onClick={addNode}>
+            <button className='btn btn-primary fw-bold' onClick={addNode}>
               Añadir Nodo
             </button>
           </form>
 
-          <form className='w-100 h-100 d-flex flex-column justify-content-center'>
+          <form className='w-100 h-100 d-flex flex-column justify-content-start'>
             <h2 className='py-3'>Añade una ruta</h2>
-            <div className='form-group my-3 px-1 row d-flex align-items-center'>
-              <label
-                htmlFor='source'
-                className='col-4 fs-5 text-center col-form-label'
-              >
+            <div className='form-group ms-3 ms-lg-5 my-3 d-flex align-items-center justify-content-between'>
+              <label htmlFor='source' className='fs-5 ms-1 ms-lg-3 text-center'>
                 Inicio:
               </label>
-              <div className='col-8'>
-                <select
-                  name='source'
-                  className='mx-1 form-control'
-                  onChange={(e) => handleChange(e, 2)}
-                  value={form.source}
-                  required
-                >
-                  <option value=''>---</option>
-                  {Object.keys(data).length &&
-                    data.nodes.map(
-                      ({ id }, idx) =>
-                        (more.form !== 1 || more.value !== id) && (
-                          <option key={idx} value={id}>
-                            {id}
-                          </option>
-                        )
-                    )}
-                </select>
-              </div>
+              <select
+                name='source'
+                className='w-mq ms-2 form-control'
+                onChange={(e) => handleChange(e, 2)}
+                value={form.source}
+                required
+              >
+                <option value=''>---</option>
+                {Object.keys(data).length &&
+                  data.nodes.map(
+                    ({ id }, idx) =>
+                      (more.form !== 1 || more.value !== id) && (
+                        <option key={idx} value={id}>
+                          {id}
+                        </option>
+                      )
+                  )}
+              </select>
             </div>
 
-            <div className='form-group my-3 px-1 row d-flex align-items-center'>
-              <label
-                htmlFor='target'
-                className='col-4 fs-5 text-center col-form-label'
-              >
+            <div className='form-group ms-3 ms-lg-5 my-3 d-flex align-items-center justify-content-between'>
+              <label htmlFor='target' className='ms-1 ms-lg-3 fs-5 text-center'>
                 Final:
               </label>
-              <div className='col-8'>
-                <select
-                  name='target'
-                  className='mx-1 form-control'
-                  onChange={(e) => handleChange(e, 1)}
-                  value={form.target}
-                  required
-                >
-                  <option value=''>---</option>
-                  {Object.keys(data).length &&
-                    data.nodes.map(
-                      ({ id }, idx) =>
-                        (more.form !== 2 || more.value !== id) && (
-                          <option key={idx} value={id}>
-                            {id}
-                          </option>
-                        )
-                    )}
-                </select>
-              </div>
+              <select
+                name='target'
+                className='w-mq ms-2 form-control'
+                onChange={(e) => handleChange(e, 1)}
+                value={form.target}
+                required
+              >
+                <option value=''>---</option>
+                {Object.keys(data).length &&
+                  data.nodes.map(
+                    ({ id }, idx) =>
+                      (more.form !== 2 || more.value !== id) && (
+                        <option key={idx} value={id}>
+                          {id}
+                        </option>
+                      )
+                  )}
+              </select>
             </div>
 
-            <div className='form-group my-3 px-2 row d-flex align-items-center'>
-              <label
-                htmlFor='value'
-                className='col-4 fs-5 text-center col-form-label'
-              >
+            <div className='form-group ms-3 ms-lg-5 my-3 d-flex align-items-center justify-content-between'>
+              <label htmlFor='value' className='ms-1 ms-lg-3 fs-5 text-center'>
                 Distancia:
               </label>
-              <div className='col-8'>
-                <input
-                  type='number'
-                  name='value'
-                  className='form-control'
-                  placeholder='Ingrese la distancia'
-                  value={form.value}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+              <input
+                type='number'
+                name='value'
+                className='w-mq ms-2 form-control'
+                placeholder='Ingrese la distancia'
+                value={form.value}
+                onChange={handleChange}
+                required
+              />
             </div>
-            <button className='btn btn-success fw-bold' onClick={addEdge}>
+            <button className='btn btn-primary fw-bold' onClick={addEdge}>
               Añadir Ruta
             </button>
           </form>
+          <p className='text-white text-justify pt-4 fs-6'>
+            Haga click en dos nodos del gráfico para obtener la distancia más
+            corta entre estos dos
+          </p>
         </section>
       </main>
     </Fragment>
