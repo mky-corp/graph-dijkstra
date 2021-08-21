@@ -3,7 +3,7 @@
  *
  * @version 1.0.0
  *
- * @license Apache
+ * @license MIT
  *
  * @author Jochizan (Roca Hormaza Joan José) <remnyachizot2015@gmail.com>
  *
@@ -106,6 +106,8 @@ class Graph {
     let lastStep = endNode; // creamos un valor que comience con el nodo final para iterar en el while
 
     while (lastStep !== startNode) {
+      if (lastStep === undefined) return [['none'], 0];
+
       path.unshift(backtrace[lastStep]); // subimos al principio de arreglo los valores del backtrace con el actual "lastStep"
       lastStep = backtrace[lastStep]; // asignamos el valor del backtrace con el nodo actual seguir obteniendo la ruta más corta
     }
