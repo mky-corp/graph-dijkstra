@@ -227,7 +227,7 @@ const App = () => {
               <input
                 name='name'
                 type='text'
-                className='w-mq ms-2 form-control'
+                className='w-mq mx-3 form-control'
                 placeholder='Ingrese su nombre'
                 value={form.name}
                 onChange={handleChange}
@@ -248,7 +248,7 @@ const App = () => {
               </label>
               <select
                 name='source'
-                className='w-mq ms-2 form-control'
+                className='w-mq mx-3 form-control'
                 onChange={(e) => handleChange(e, 2)}
                 value={form.source}
                 required
@@ -272,7 +272,7 @@ const App = () => {
               </label>
               <select
                 name='target'
-                className='w-mq ms-2 form-control'
+                className='w-mq mx-3 form-control'
                 onChange={(e) => handleChange(e, 1)}
                 value={form.target}
                 required
@@ -297,7 +297,7 @@ const App = () => {
               <input
                 type='number'
                 name='value'
-                className='w-mq ms-2 form-control'
+                className='w-mq mx-3 form-control'
                 placeholder='Ingrese la distancia'
                 value={form.value}
                 onChange={handleChange}
